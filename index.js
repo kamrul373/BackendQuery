@@ -47,7 +47,7 @@ async function run () {
 	} )
 
 	app.get( "/api/v1/top-rated-movies", ( req, res ) => {
-		const result = connection.query( 'SELECT ratings.averageRating, ratings.tconst movies.tconst, movies.titleType,movies.genres FROM ratings INNER JOIN movies ON ratings.tconst=movies.tconst ORDER BY ratings.averageRating DESC', function ( error, results, fields ) {
+		const result = connection.query( 'SELECT movies.tconst,  movies.primaryTitle, movies.runtimeMinutes,  movies.genres, ratings.averageRating from ratings JOIN movies ON ratings.tconst = movies.tconst WHERE ratings.averageRating > 6;', function ( error, results, fields ) {
 			if ( error ) throw error;
 			results = JSON.parse( JSON.stringify( results ) )
 			res.send( results );

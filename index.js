@@ -27,6 +27,15 @@ async function run () {
 
 	} )
 
+	app.post( "/api/v1/new-movie", ( req, res ) => {
+		const movie = req.body;
+		var query = connection.query( 'INSERT INTO movies SET ?', movie, function ( error, results, fields ) {
+			if ( error ) throw error;
+			res.send( "success" )
+		} );
+
+	} )
+
 
 }
 run().catch( error => console.log( error ) )

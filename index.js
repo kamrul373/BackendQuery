@@ -18,6 +18,7 @@ var connection = mysql.createConnection( {
 connection.connect();
 
 async function run () {
+	// get top runtime movie
 	app.get( "/api/v1/longest-duration-movies", ( req, res ) => {
 		const result = connection.query( 'SELECT * FROM movies ORDER BY runtimeMinutes DESC limit 10', function ( error, results, fields ) {
 			if ( error ) throw error;
@@ -26,14 +27,31 @@ async function run () {
 		} );
 
 	} )
-
+	// add movie
 	app.post( "/api/v1/new-movie", ( req, res ) => {
-		const movie = req.body;
+		const request = req.body;
+		const movie = {
+			tconst: request.tconst, // not required if its take as primary key , it will auto increase by DBMS
+			titleType: request.titleType,
+			primaryTitle: request.primaryTitle,
+			runtimeMinutes: request.runtimeMinutes,
+			genres: request.genres
+
+		}
+
 		var query = connection.query( 'INSERT INTO movies SET ?', movie, function ( error, results, fields ) {
 			if ( error ) throw error;
 			res.send( "success" )
 		} );
 
+	} )
+
+	app.get( "/api/v1/top-rated-movies", ( req, res ) => {
+		const result = connection.query( 'SELECT ratings.averageRating, ratings.tconst movies.tconst, movies.titleType,movies.genres FROM ratings INNER JOIN movies ON ratings.tconst=movies.tconst ORDER BY ratings.averageRating DESC', function ( error, results, fields ) {
+			if ( error ) throw error;
+			results = JSON.parse( JSON.stringify( results ) )
+			res.send( results );
+		} );
 	} )
 
 
